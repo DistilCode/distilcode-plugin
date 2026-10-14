@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "memory": {
+      "command": "node",
+      "args": [
+        "./servers/mcp-codebase-memory.js"
+      ],
+      "cwd": "."
+    }
+  }
+}

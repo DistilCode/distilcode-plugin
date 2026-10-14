@@ -1,0 +1,14 @@
+{
+  "name": "distilcode-marketplace",
+  "description": "DistilCode plugins for Claude Code",
+  "owner": {
+    "name": "vineeth898"
+  },
+  "plugins": [
+    {
+      "name": "distilcode",
+      "source": "./",
+      "description": "Codebase memory, rtk shell compaction, ponytail/caveman modes, explore and smart-bash subagents"
+    }
+  ]
+}

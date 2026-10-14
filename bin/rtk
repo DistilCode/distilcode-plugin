@@ -1,0 +1,109 @@
+#!/usr/bin/env node
+// bin/rtk — self-bootstrapping rtk launcher.
+// First run downloads the pinned rtk release for this machine (sha256-verified
+// against the release checksums.txt) into ~/.distilcode/bin/rtk-<version>/,
+// the directory the DistilCode CLI already searches, so both share one copy
+// and it survives plugin updates. Later runs go straight to the cached binary.
+// Claude: lives in the plugin's bin/ (auto-PATH while enabled).
+// Codex: no auto bin/ PATH; the PreToolUse hook spawns this launcher to
+// bootstrap the binary, then pins the cached binary's full path.
+// Stdlib only. Never throws past this point on purpose: on any failure it
+// exits non-zero with the reason on stderr and callers fall back to running
+// the original command unfiltered.
+"use strict"
+
+const { execFileSync, spawnSync } = require("node:child_process")
+const { createHash } = require("node:crypto")
+const fs = require("node:fs")
+const https = require("node:https")
+const os = require("node:os")
+const path = require("node:path")
+
+const RTK_VERSION = "v0.48.0"
+const RELEASES = `https://github.com/rtk-ai/rtk/releases/download/${RTK_VERSION}`
+
+function rustTarget(platform, arch) {
+  if (arch !== "x64" && arch !== "arm64") return null
+  if (platform === "win32") return arch === "x64" ? "x86_64-pc-windows-msvc" : null
+  if (platform === "darwin") return arch === "x64" ? "x86_64-apple-darwin" : "aarch64-apple-darwin"
+  if (platform === "linux") return arch === "x64" ? "x86_64-unknown-linux-musl" : "aarch64-unknown-linux-gnu"
+  return null
+}
+
+function cacheDir() {
+  const target = rustTarget(process.platform, process.arch)
+  if (!target) throw new Error(`rtk has no release for ${process.platform}/${process.arch}`)
+  const root = process.env.RTK_CACHE_DIR ?? path.join(os.homedir(), ".distilcode", "bin")
+  return { dir: path.join(root, `rtk-${RTK_VERSION}`), target, binary: process.platform === "win32" ? "rtk.exe" : "rtk" }
+}
+
+function cachedBinary() {
+  const { dir, binary } = cacheDir()
+  const dest = path.join(dir, binary)
+  const marker = path.join(dir, "RTK_VERSION")
+  if (fs.existsSync(dest) && fs.existsSync(marker) && fs.readFileSync(marker, "utf8").trim() === RTK_VERSION) return dest
+  return null
+}
+
+function get(url, redirects = 5) {
+  return new Promise((resolve, reject) => {
+    https.get(url, { headers: { "user-agent": "codebase-memory-plugin" } }, (res) => {
+      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location && redirects > 0) {
+        res.resume()
+        resolve(get(new URL(res.headers.location, url).toString(), redirects - 1))
+        return
+      }
+      if (res.statusCode !== 200) {
+        res.resume()
+        reject(new Error(`download failed: HTTP ${res.statusCode} (${url})`))
+        return
+      }
+      const chunks = []
+      res.on("data", (c) => chunks.push(c))
+      res.on("end", () => resolve(Buffer.concat(chunks)))
+      res.on("error", reject)
+    }).on("error", reject)
+  })
+}
+
+async function ensureBinary() {
+  const hit = cachedBinary()
+  if (hit) return hit
+  const { dir, target, binary } = cacheDir()
+  const archive = `rtk-${target}.${process.platform === "win32" ? "zip" : "tar.gz"}`
+  const sums = (await get(`${RELEASES}/checksums.txt`)).toString("utf8")
+  const expected = sums.split("\n").find((l) => l.trim().endsWith(archive))?.trim().split(/\s+/)[0]
+  if (!expected || !/^[a-f\d]{64}$/i.test(expected)) throw new Error(`missing checksum for ${archive}`)
+  const bytes = await get(`${RELEASES}/${archive}`)
+  if (createHash("sha256").update(bytes).digest("hex") !== expected.toLowerCase()) throw new Error(`checksum mismatch for ${archive}`)
+  const work = fs.mkdtempSync(path.join(os.tmpdir(), "rtk-install-"))
+  try {
+    fs.writeFileSync(path.join(work, archive), bytes)
+    try {
+      execFileSync("tar", ["-xf", path.join(work, archive), "-C", work], { stdio: "ignore" })
+    } catch {
+      throw new Error("`tar` is required to unpack rtk (built into Win10+/macOS/most Linux)")
+    }
+    const extracted = path.join(work, binary)
+    if (!fs.existsSync(extracted)) throw new Error(`archive ${archive} does not contain ${binary}`)
+    fs.mkdirSync(dir, { recursive: true })
+    fs.copyFileSync(extracted, path.join(dir, binary))
+    if (process.platform !== "win32") fs.chmodSync(path.join(dir, binary), 0o755)
+    fs.writeFileSync(path.join(dir, "RTK_VERSION"), `${RTK_VERSION}\n`)
+    return path.join(dir, binary)
+  } finally {
+    fs.rmSync(work, { recursive: true, force: true })
+  }
+}
+
+async function main(argv) {
+  const binary = await ensureBinary()
+  const child = spawnSync(binary, argv, { stdio: "inherit" })
+  process.exit(child.status ?? 1)
+}
+
+module.exports = { rustTarget, cacheDir, cachedBinary, ensureBinary, RTK_VERSION }
+if (require.main === module) main(process.argv.slice(2)).catch((e) => {
+  console.error(`rtk launcher: ${e?.message ?? e}`)
+  process.exit(1)
+})
