@@ -1,9 +1,10 @@
 {
   "name": "distilcode",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "DistilCode for Codex: persistent per-repo codebase memory, rtk-compacted shell output, and ponytail/caveman modes shared with the DistilCode CLI and the Claude Code plugin",
   "author": {
-    "name": "vineeth898"
+    "name": "vineeth898",
+    "url": "https://www.distilcode.dev"
   },
   "homepage": "https://www.distilcode.dev/codex-plugin",
   "repository": "https://github.com/DistilCode/distilcode-plugin",
@@ -81,9 +82,9 @@
       "Write"
     ],
     "websiteURL": "https://www.distilcode.dev/codex-plugin",
-    "supportURL": "https://github.com/DistilCode/distilcode-plugin/issues",
+    "supportURL": "https://www.distilcode.dev/contact",
     "privacyPolicyURL": "https://www.distilcode.dev/privacy-policy",
-    "termsOfServiceURL": "https://github.com/DistilCode/distilcode-plugin/blob/main/LICENSE",
+    "termsOfServiceURL": "https://www.distilcode.dev/terms",
     "defaultPrompt": [
       "Enable codebase memory for this repo",
       "caveman on",

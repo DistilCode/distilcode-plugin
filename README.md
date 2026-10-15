@@ -5,6 +5,12 @@ DistilCode CLI features for Claude Code and Codex, from one directory (see
 memory and the ponytail/caveman toggles live in the same files under
 `~/.local/share/distilcode/` (or `$XDG_DATA_HOME/distilcode`, or `DISTILCODE_DATA_DIR`).
 
+Guides: [Claude Code plugin](https://www.distilcode.dev/claude-code-plugin) ·
+[Codex plugin](https://www.distilcode.dev/codex-plugin) ·
+[DistilCode CLI](https://www.distilcode.dev) ·
+[Privacy](https://www.distilcode.dev/privacy-policy) ·
+[Terms](https://www.distilcode.dev/terms)
+
 ## Install
 
 ```sh
