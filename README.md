@@ -30,6 +30,31 @@ Needs only `node` on PATH. No `npm install`.
 | `explore` agent | `agents/explore.md`, `hooks/` SubagentStart | The CLI's explore agent (Glob/Grep/Read/Bash/web). When memory is on, a hook gives it the memory workflow plus a snapshot, and it updates memory as it learns. Repo files stay read-only |
 | `smart-bash` agent | `agents/smart-bash.md` | Haiku shell runner; keeps noisy command output out of the main context |
 
+## What it runs, downloads, and stores
+
+DistilCode sends no data anywhere. It has no telemetry, no account, and no API keys.
+
+- **Network: one download, rtk only.** On first use, `bin/rtk` downloads the pinned
+  [rtk](https://github.com/rtk-ai/rtk) release (`v0.48.0`) for your OS and CPU from
+  `https://github.com/rtk-ai/rtk/releases/download/v0.48.0/`, checks its sha256 against
+  that release's `checksums.txt`, and unpacks it to `~/.distilcode/bin/rtk-v0.48.0/`.
+  Nothing else is fetched. It is skipped when rtk is already installed (beside the
+  DistilCode CLI, in `~/.distilcode/bin`, or on PATH) or when `DISTILCODE_NO_TOKEN_KILLER=1` is set.
+- **Shell commands.** The PreToolUse hook rewrites Bash/PowerShell commands to run
+  through `rtk`, which shortens their output. In Claude Code it never approves a command:
+  your normal permission prompts still apply. The PostToolUse hook only reshapes
+  PowerShell output.
+- **Prompt text.** The SessionStart, UserPromptSubmit and SubagentStart hooks add the
+  ponytail/caveman mode text and, when you enable memory for a repo, that repo's memory.
+- **Local files.** Codebase memory and mode settings are stored as JSON under
+  `~/.local/share/distilcode/` (or `$XDG_DATA_HOME/distilcode`, or `DISTILCODE_DATA_DIR`).
+  Per-session hook state goes to the plugin's data directory (`${CLAUDE_PLUGIN_DATA}`),
+  or your temp directory.
+- **MCP server.** `servers/mcp-codebase-memory.js` runs locally over stdio and only reads
+  and writes the memory file above.
+
+All code is plain, readable JavaScript using Node's standard library. There are no npm dependencies.
+
 ## Toggling ponytail and caveman
 
 Type any of these as the whole prompt. A hook catches them, so they cost no model turn:
