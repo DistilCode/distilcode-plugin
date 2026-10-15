@@ -1,11 +1,11 @@
 {
   "name": "distilcode",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "DistilCode for Codex: persistent per-repo codebase memory, rtk-compacted shell output, and ponytail/caveman modes shared with the DistilCode CLI and the Claude Code plugin",
   "author": {
     "name": "vineeth898"
   },
-  "homepage": "https://github.com/DistilCode/distilcode-plugin",
+  "homepage": "https://www.distilcode.dev/codex-plugin",
   "repository": "https://github.com/DistilCode/distilcode-plugin",
   "keywords": [
     "distilcode",
@@ -72,16 +72,25 @@
   },
   "interface": {
     "displayName": "DistilCode",
-    "shortDescription": "Codebase memory, compact shell output, ponytail/caveman modes",
-    "developerName": "vineeth898",
+    "shortDescription": "Leaner context for Codex",
+    "longDescription": "DistilCode cuts what Codex spends on context.\n\n- Shell output compaction: commands run through rtk, which trims their output before it reaches the model.\n- Codebase memory: a per-repo overview and feature map that survives sessions, loaded at session start and given to the explorer subagent. Off until you enable it for a repo.\n- Ponytail mode (on by default): reuse what exists and write the shortest working diff.\n- Caveman mode (off by default): compressed replies that keep every technical fact.\n\nModes and memory are shared with the DistilCode CLI and the Claude Code plugin. The plugin sends no data anywhere; its only download is the pinned rtk release from GitHub, checked against its sha256 checksums.",
+    "developerName": "DistilCode",
     "category": "Developer Tools",
     "capabilities": [
       "Read",
       "Write"
     ],
+    "websiteURL": "https://www.distilcode.dev/codex-plugin",
+    "supportURL": "https://github.com/DistilCode/distilcode-plugin/issues",
+    "privacyPolicyURL": "https://www.distilcode.dev/privacy-policy",
+    "termsOfServiceURL": "https://github.com/DistilCode/distilcode-plugin/blob/main/LICENSE",
     "defaultPrompt": [
       "Enable codebase memory for this repo",
-      "caveman on"
-    ]
+      "caveman on",
+      "What do you remember about this repo?"
+    ],
+    "brandColor": "#2F6844",
+    "composerIcon": "./.claude-plugin/icon.png",
+    "logo": "./.claude-plugin/icon.png"
   }
 }

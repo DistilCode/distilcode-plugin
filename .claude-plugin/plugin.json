@@ -2,7 +2,7 @@
   "name": "distilcode",
   "displayName": "DistilCode",
   "description": "DistilCode for Claude Code: persistent per-repo codebase memory, rtk-compacted shell output, ponytail/caveman modes shared with the DistilCode CLI, and explore/smart-bash subagents",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "author": {
     "name": "vineeth898"
   },

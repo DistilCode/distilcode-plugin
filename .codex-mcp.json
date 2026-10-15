@@ -1,11 +1,12 @@
 {
   "mcpServers": {
     "memory": {
+      "type": "stdio",
       "command": "node",
       "args": [
-        "./servers/mcp-codebase-memory.js"
+        "${PLUGIN_ROOT}/servers/mcp-codebase-memory.js"
       ],
-      "cwd": "."
+      "cwd": "${PLUGIN_ROOT}"
     }
   }
 }
