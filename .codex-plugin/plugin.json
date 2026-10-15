@@ -1,6 +1,6 @@
 {
   "name": "distilcode",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "DistilCode for Codex: persistent per-repo codebase memory, rtk-compacted shell output, and ponytail/caveman modes shared with the DistilCode CLI and the Claude Code plugin",
   "author": {
     "name": "vineeth898"
@@ -8,6 +8,11 @@
   "homepage": "https://github.com/DistilCode/distilcode-plugin",
   "repository": "https://github.com/DistilCode/distilcode-plugin",
   "keywords": [
+    "distilcode",
+    "distil",
+    "token-saver",
+    "save-costs",
+    "context-reducer",
     "codebase-memory",
     "rtk",
     "token-efficiency",
