@@ -8,6 +8,8 @@
   },
   "homepage": "https://github.com/DistilCode/distilcode-plugin",
   "repository": "https://github.com/DistilCode/distilcode-plugin",
+  "documentationUrl": "https://www.distilcode.dev/claude-code-plugin",
+  "termsOfServiceUrl": "https://github.com/DistilCode/distilcode-plugin/blob/main/LICENSE",
   "keywords": [
     "distilcode",
     "distil",
