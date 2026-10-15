@@ -71,7 +71,7 @@ normal mode                   # both off for this session
 Precedence: session > repo > global > default. Setting a wider scope clears
 the narrower overrides that apply to you, so the new value takes effect. If the
 hook doesn't catch a prompt, the `/distilcode` slash command does the same thing,
-at the cost of one short reply. You can also just ask ("turn caveman off for this
+at the cost of one short reply and a normal permission prompt for the `node` call. You can also just ask ("turn caveman off for this
 repo"): the `distilcode-modes` skill runs the same script.
 
 The full mode text is injected once per context (again after `/clear` or

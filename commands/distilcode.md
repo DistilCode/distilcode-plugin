@@ -1,10 +1,9 @@
 ---
 description: Toggle DistilCode modes, e.g. `/distilcode caveman on` or `/distilcode ponytail off repo`
 argument-hint: "[ponytail|caveman] [on|off|toggle|status] [session|repo|global]"
-allowed-tools: Bash(node:*)
 disable-model-invocation: true
 ---
 
-!`node "${CLAUDE_PLUGIN_ROOT}/scripts/modes.js" $ARGUMENTS --session "${CLAUDE_SESSION_ID}"`
+Use the distilcode-modes skill to apply this mode request: $ARGUMENTS
 
-Repeat the output above to the user verbatim and nothing else.
+With no arguments, report the status of both modes. Report the script's printed line to the user verbatim and nothing else.
